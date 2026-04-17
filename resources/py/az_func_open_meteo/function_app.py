@@ -27,8 +27,7 @@ def get_makati_weather_data():
 		logging.info("Successfully extracted weather data from the API.")
 		return json.dumps(data)
 	except Exception as e:
-		logging.error(f"Error fetching weather data: {e}")
-		return None
+		raise Exception(f"Error fetching weather data: {e}")
 
 def upload_to_blob_storage(blob_name, blob_data):
 	# Set up Azure Blob Storage connection
@@ -44,7 +43,7 @@ def upload_to_blob_storage(blob_name, blob_data):
 		container_client.upload_blob(name=blob_name, data=blob_data, overwrite=True)
 		logging.info(f"Successfully uploaded {blob_name} to Azure Blob Storage.")
 	except Exception as e:
-		logging.error(f"Error uploading to Azure Blob Storage: {e}")
+		raise Exception(f"Error uploading to Azure Blob Storage: {e}")
 
 app = func.FunctionApp()
 
@@ -56,19 +55,15 @@ app = func.FunctionApp()
 ) 
 def hourly_run(myTimer: func.TimerRequest) -> None:
 	
-    # Get current timestamp for blob naming
-    now = dt.now().strftime("%Y%m%d%H%M%S")
+	# Get current timestamp for blob naming
+	now = dt.now().strftime("%Y%m%d%H%M%S")
 
-    if myTimer.past_due:
-        logging.info('The timer is past due!')
-    
-    blob_data = get_makati_weather_data()
-    if not blob_data is None:
+	if myTimer.past_due:
+		logging.info('The timer is past due!')
+
+	blob_data = get_makati_weather_data()
+	if not blob_data is None:
 		# Define blob name with timestamp
-        blob_name = f"dumps/open_meteo/open_meteo_{now}.json"
-        upload_to_blob_storage(blob_name, blob_data)
-    else:
-        logging.error("No blob data uploaded.")	
-    
-    logging.info('Python timer trigger function executed.')
-
+		blob_name = f"dumps/open_meteo/open_meteo_{now}.json"
+		upload_to_blob_storage(blob_name, blob_data)
+		logging.info('Weather data extraction completed.')
