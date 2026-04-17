@@ -1,3 +1,11 @@
+# Environment file
 .env
+
+# Virtual environment
 env/
+
+# Some weird sqlite file produced somewhere.
 *.sqlite
+
+# VS Code settings
+.vscode/

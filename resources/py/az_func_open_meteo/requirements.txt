@@ -1,0 +1,8 @@
+# Uncomment to enable Azure Monitor OpenTelemetry
+# Ref: aka.ms/functions-azure-monitor-python
+# azure-monitor-opentelemetry
+
+azure-functions==2.1.0
+requests==2.33.1
+pandas==3.0.2
+azure-storage-blob==12.28.0
